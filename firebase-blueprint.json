@@ -1,0 +1,160 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account profile and subscription status",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique Firebase Auth UID"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's registered email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "User display name"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "User profile photo URL"
+        },
+        "isPro": {
+          "type": "boolean",
+          "description": "Whether the user has unlocked the VIP PRO plan"
+        },
+        "creditsRemaining": {
+          "type": "number",
+          "description": "Available reply generation credits"
+        },
+        "preferredLanguage": {
+          "type": "string",
+          "description": "User interface language preference (en, pt, es, fr, de, it)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Account creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "isPro",
+        "creditsRemaining"
+      ]
+    },
+    "HistoryItem": {
+      "title": "HistoryItem",
+      "description": "Generated text replies and conversation analysis",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique history item identifier"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owner user UID"
+        },
+        "inputContext": {
+          "type": "string",
+          "description": "Input chat screenshot or transcription"
+        },
+        "goal": {
+          "type": "string",
+          "description": "Conversation objective"
+        },
+        "tone": {
+          "type": "string",
+          "description": "Interaction tone"
+        },
+        "spiciness": {
+          "type": "number",
+          "description": "Intensity level from 1 to 5"
+        },
+        "options": {
+          "type": "array",
+          "description": "List of 3 crafted reply suggestions"
+        },
+        "analysis": {
+          "type": "string",
+          "description": "Psychological dynamics breakdown"
+        },
+        "followUpAdvice": {
+          "type": "string",
+          "description": "Next tactical steps"
+        },
+        "isFavorite": {
+          "type": "boolean",
+          "description": "Bookmarked as favorite"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "options",
+        "analysis"
+      ]
+    },
+    "MorningTracker": {
+      "title": "MorningTracker",
+      "description": "User progress for the 14-day morning love message routine",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Owner user UID"
+        },
+        "firstSeenTimestamp": {
+          "type": "number",
+          "description": "Epoch timestamp of first engagement"
+        },
+        "lastNotifiedDate": {
+          "type": "string",
+          "description": "Date string of last morning notification sent"
+        },
+        "notificationsEnabled": {
+          "type": "boolean",
+          "description": "Browser notifications enabled status"
+        },
+        "currentDay": {
+          "type": "number",
+          "description": "Active day in 14-day sequence"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": [
+        "userId",
+        "firstSeenTimestamp",
+        "notificationsEnabled"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile with private settings and subscription credits"
+    },
+    "/users/{userId}/history/{historyId}": {
+      "schema": "HistoryItem",
+      "description": "Saved generation history and favorite magnetic replies"
+    },
+    "/users/{userId}/morningTracker/{trackerId}": {
+      "schema": "MorningTracker",
+      "description": "Morning routine progress tracking"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Lovix",
+  "description": "AI Wingman & Social Dynamics expert for magnetic texting, flirting, and dating success.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
