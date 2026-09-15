@@ -1,24 +1,38 @@
 {
+  "id": "/",
   "name": "Lovix • Flirt & Social Dynamics AI",
   "short_name": "Lovix",
   "description": "AI Wingman & Social Dynamics expert for magnetic texting, flirting, and dating success.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#09090b",
   "theme_color": "#09090b",
   "icons": [
     {
-      "src": "/assets/lovix-logo.png",
+      "src": "/pwa-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/assets/lovix-logo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

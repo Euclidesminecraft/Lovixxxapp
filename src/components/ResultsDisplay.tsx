@@ -179,22 +179,22 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
   if (isLoading) {
     return (
-      <div className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center min-h-[460px] text-center">
-        <div className="relative mb-5">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-rose-600 to-amber-500 animate-spin blur-md opacity-70" />
-          <div className="w-16 h-16 rounded-2xl bg-zinc-950 border border-rose-500/40 absolute inset-0 flex items-center justify-center">
-            <Flame className="w-7 h-7 text-rose-500 animate-pulse" />
+      <div className="bg-[#111114] border border-white/[0.08] rounded-2xl p-6 sm:p-10 flex flex-col items-center justify-center min-h-[460px] text-center shadow-[0_4px_24px_-2px_rgba(0,0,0,0.5)]">
+        <div className="relative mb-6">
+          <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-white/[0.1] flex items-center justify-center shadow-lg relative">
+            <Flame className="w-6 h-6 text-rose-500 animate-pulse" />
           </div>
+          <div className="absolute -inset-1 rounded-2xl border border-rose-500/30 animate-ping pointer-events-none" />
         </div>
-        <h3 className="text-base font-bold text-white mb-1">
+        <h3 className="text-sm font-semibold text-white mb-1.5 tracking-tight">
           {language === "pt"
             ? "Lovix calibrando as respostas..."
             : "Lovix calibrating magnetic replies..."}
         </h3>
         <p className="text-xs text-zinc-400 max-w-sm leading-relaxed">
           {language === "pt"
-            ? "Aplicando dinâmica social push-pull, dosando tensão e removendo clichês."
-            : "Applying push-pull dynamics, tension calibration, and high-value frames."}
+            ? "Aplicando dinâmica social push-pull, dosando tensão e refinando o tom."
+            : "Applying push-pull dynamics, tension calibration, and authentic tone."}
         </p>
       </div>
     );
@@ -202,11 +202,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
   if (!result) {
     return (
-      <div className="bg-zinc-900/70 border border-dashed border-zinc-800 rounded-2xl p-8 flex flex-col items-center justify-center min-h-[460px] text-center">
-        <div className="w-12 h-12 rounded-2xl bg-zinc-800/60 border border-zinc-700/60 flex items-center justify-center text-zinc-400 mb-4">
-          <Smartphone className="w-6 h-6 text-zinc-500" />
+      <div className="bg-[#111114]/60 border border-dashed border-white/[0.08] rounded-2xl p-8 flex flex-col items-center justify-center min-h-[460px] text-center">
+        <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-white/[0.08] flex items-center justify-center text-zinc-400 mb-4 shadow-sm">
+          <Smartphone className="w-5 h-5 text-zinc-400" />
         </div>
-        <h3 className="text-sm font-bold text-zinc-200 mb-1">
+        <h3 className="text-sm font-medium text-zinc-200 mb-1">
           {t.emptyResultsTitle}
         </h3>
         <p className="text-xs text-zinc-500 max-w-xs leading-relaxed">
@@ -223,19 +223,19 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   return (
     <div className="space-y-6">
       {/* Header of Results */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#111114] border border-white/[0.08] rounded-2xl p-4 sm:p-5 shadow-[0_4px_24px_-2px_rgba(0,0,0,0.5)]">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" /> {t.resultsHeaderTitle}
+            <span className="text-xs font-semibold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-rose-500" /> {t.resultsHeaderTitle}
             </span>
-            <span className="text-[11px] text-zinc-400">
+            <span className="text-[11px] text-zinc-400 font-medium">
               • {t.toneLabel} {result.context.tom}
             </span>
           </div>
 
           {result.context.rumoConversa && (
-            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-rose-300 font-semibold bg-rose-950/40 border border-rose-500/30 px-2.5 py-1 rounded-lg w-fit">
+            <div className="mt-2 flex items-center gap-1.5 text-xs text-rose-300 font-medium bg-rose-500/[0.08] border border-rose-500/20 px-2.5 py-1 rounded-lg w-fit">
               <Compass className="w-3.5 h-3.5 text-rose-400 shrink-0" />
               <span>
                 {language === "pt" ? "Rumo: " : "Direction: "}
@@ -252,17 +252,17 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         <div className="flex items-center gap-2 self-end sm:self-center">
           <button
             onClick={() => onToggleFavorite(result.id)}
-            className={`p-2 rounded-xl text-xs font-medium border transition-colors cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3 py-2 rounded-xl text-xs font-medium border transition-colors cursor-pointer flex items-center gap-1.5 ${
               isFavorite
-                ? "bg-rose-500/20 text-rose-300 border-rose-500/40"
-                : "bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-white hover:bg-zinc-800"
+                ? "bg-rose-500/10 text-rose-300 border-rose-500/30"
+                : "bg-zinc-900 text-zinc-400 border-white/[0.08] hover:text-white hover:bg-zinc-850"
             }`}
             title="Save to Favorites"
           >
             {isFavorite ? (
               <BookmarkCheck className="w-4 h-4 text-rose-400" />
             ) : (
-              <Bookmark className="w-4 h-4" />
+              <Bookmark className="w-4 h-4 text-zinc-400" />
             )}
             <span className="text-[11px] hidden sm:inline">
               {language === "pt" ? "Favoritar" : "Favorite"}
@@ -272,7 +272,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           <button
             id="copy-all-btn"
             onClick={handleCopyAll}
-            className="px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-950 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="px-3.5 py-2 rounded-xl text-xs font-medium bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-white/[0.08] transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
             title="Copy all 3 replies"
           >
             {copiedAll ? (
@@ -293,19 +293,19 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       </div>
 
       {/* Simulated Smartphone Chat Simulator */}
-      <div className="bg-zinc-950 border border-zinc-800/90 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="bg-[#09090b] border border-white/[0.08] rounded-2xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.6)]">
         {/* Chat Topbar */}
-        <div className="bg-zinc-900/90 px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+        <div className="bg-[#121215] px-4 py-3 border-b border-white/[0.06] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center font-bold text-xs text-white">
+            <div className="w-8 h-8 rounded-full bg-zinc-800 border border-white/[0.1] flex items-center justify-center font-semibold text-xs text-white">
               {result.context.relacao.charAt(0)}
             </div>
             <div>
-              <div className="text-xs font-bold text-zinc-200">
+              <div className="text-xs font-medium text-zinc-200">
                 {result.context.relacao}
               </div>
               <div className="text-[10px] text-emerald-400 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-ping" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
                 {language === "pt" ? "online agora" : "online now"}
               </div>
             </div>
@@ -317,7 +317,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             </span>
             <button
               onClick={() => setShowChatSimulator(!showChatSimulator)}
-              className="text-[11px] text-zinc-400 hover:text-zinc-200 flex items-center gap-1 px-2 py-1 rounded-lg bg-zinc-800/60 hover:bg-zinc-800 cursor-pointer transition-colors"
+              className="text-[11px] text-zinc-400 hover:text-zinc-200 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-900 border border-white/[0.06] cursor-pointer transition-colors"
             >
               {showChatSimulator ? (
                 <>
@@ -336,21 +336,21 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
         {/* Chat Feed */}
         {showChatSimulator && (
-          <div className="p-4 sm:p-5 space-y-4 bg-zinc-950/90 min-h-[160px] flex flex-col justify-end animate-in fade-in duration-150">
+          <div className="p-4 sm:p-5 space-y-4 bg-[#09090b] min-h-[160px] flex flex-col justify-end animate-in fade-in duration-150">
             {/* Received message (Left bubble) */}
             <div className="flex flex-col items-start max-w-[85%] sm:max-w-[75%]">
               <span className="text-[10px] text-zinc-500 mb-1 ml-1 font-medium">
                 {language === "pt" ? "Eles enviaram:" : "They sent:"}
               </span>
-              <div className="bg-zinc-800 text-zinc-200 rounded-2xl rounded-tl-sm p-3 text-sm leading-relaxed border border-zinc-700/50 shadow-sm space-y-2">
+              <div className="bg-zinc-900 text-zinc-200 rounded-2xl rounded-tl-sm p-3.5 text-xs sm:text-sm leading-relaxed border border-white/[0.06] shadow-sm space-y-2">
                 {result.context.image && result.context.image.data && (
-                  <div className="rounded-xl overflow-hidden border border-zinc-700/60 bg-zinc-900 max-w-[240px]">
+                  <div className="rounded-xl overflow-hidden border border-white/[0.08] bg-zinc-950 max-w-[240px]">
                     <img
                       src={result.context.image.data}
                       alt="Print"
                       className="w-full max-h-52 object-cover"
                     />
-                    <div className="p-1.5 bg-zinc-950/80 text-[10px] text-zinc-400 flex items-center gap-1 font-mono">
+                    <div className="p-1.5 bg-zinc-950/90 text-[10px] text-zinc-400 flex items-center gap-1 font-mono">
                       <FileImage className="w-3 h-3 text-rose-400" />
                       <span className="truncate">
                         {result.context.image.name || "screenshot.jpg"}
@@ -367,12 +367,12 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
             {/* Selected Lovix Reply (Right bubble) */}
             {activePreviewOption && (
               <div className="flex flex-col items-end self-end max-w-[85%] sm:max-w-[75%] animate-in fade-in duration-150">
-                <span className="text-[10px] text-rose-400/90 mb-1 mr-1 font-semibold flex items-center gap-1">
+                <span className="text-[10px] text-rose-400 mb-1 mr-1 font-medium flex items-center gap-1">
                   <Flame className="w-3 h-3" /> Lovix •{" "}
                   {language === "pt" ? "Opção " : "Option "}
                   {activePreviewOption.number}
                 </span>
-                <div className="bg-gradient-to-r from-rose-600 to-pink-600 text-white rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed shadow-lg shadow-rose-950/40">
+                <div className="bg-rose-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 text-xs sm:text-sm leading-relaxed shadow-[0_2px_12px_rgba(225,29,72,0.3)]">
                   {activePreviewOption.text}
                 </div>
               </div>
@@ -393,17 +393,17 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           return (
             <div
               key={opt.number}
-              className={`bg-zinc-900/90 border rounded-2xl p-4 sm:p-5 transition-all relative ${
+              className={`bg-[#111114] border rounded-2xl p-4 sm:p-5 transition-all relative shadow-[0_2px_12px_rgba(0,0,0,0.3)] ${
                 isSelected
-                  ? "border-rose-500/80 bg-zinc-900 shadow-lg shadow-rose-950/20"
-                  : `border-zinc-800/90 ${badge.border}`
+                  ? "border-rose-500/60 ring-1 ring-rose-500/20"
+                  : "border-white/[0.08] hover:border-white/[0.14]"
               }`}
             >
               {/* Option Card Header */}
-              <div className="flex items-center justify-between gap-2 mb-2.5">
+              <div className="flex items-center justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2">
                   <span
-                    className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${badge.bg}`}
+                    className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${badge.bg}`}
                   >
                     {badge.label}
                   </span>
@@ -412,10 +412,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => setSelectedPreviewIndex(opt.number)}
-                    className={`px-2 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
                       isSelected
-                        ? "text-rose-300 bg-rose-500/20"
-                        : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+                        ? "text-rose-300 bg-rose-500/15"
+                        : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
                     }`}
                     title="View in simulated chat"
                   >
@@ -425,10 +425,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                   <button
                     id={`copy-opt-${opt.number}-btn`}
                     onClick={() => handleCopyOption(opt.text, opt.number)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer border ${
                       isCopied
-                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
-                        : "bg-zinc-950 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/80"
+                        ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                        : "bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border-white/[0.08]"
                     }`}
                   >
                     {isCopied ? (
@@ -447,19 +447,19 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
               </div>
 
               {/* Message Text */}
-              <div className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800/80 text-zinc-100 font-sans text-sm sm:text-base leading-relaxed select-text">
+              <div className="p-3.5 rounded-xl bg-zinc-950/80 border border-white/[0.06] text-zinc-100 font-sans text-sm sm:text-[15px] leading-relaxed select-text">
                 "{opt.text}"
               </div>
 
               {/* Quick Psychology Hook explanation toggle */}
-              <div className="mt-3 flex items-center justify-between pt-2 border-t border-zinc-800/60">
-                <span className="text-[11px] text-zinc-500">
+              <div className="mt-3 flex items-center justify-between pt-2.5 border-t border-white/[0.06]">
+                <span className="text-[11px] text-zinc-400 font-normal">
                   {badge.desc}
                 </span>
                 <button
                   onClick={() => handleFetchAnalysis(opt)}
                   disabled={isAnalyzing}
-                  className="text-[11px] text-rose-400/90 hover:text-rose-300 flex items-center gap-1 transition-colors cursor-pointer"
+                  className="text-[11px] text-rose-400 hover:text-rose-300 flex items-center gap-1 transition-colors cursor-pointer font-medium"
                 >
                   <HelpCircle className="w-3 h-3" />
                   <span>
@@ -474,7 +474,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
               {/* Dynamic Psychological Analysis */}
               {isAnalyzing && (
-                <div className="mt-2.5 p-3 rounded-xl bg-zinc-950/60 border border-zinc-800 text-xs text-zinc-400 flex items-center gap-2">
+                <div className="mt-2.5 p-3 rounded-xl bg-zinc-950/80 border border-white/[0.06] text-xs text-zinc-400 flex items-center gap-2">
                   <div className="w-3 h-3 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
                   <span>
                     {language === "pt"
@@ -485,8 +485,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
               )}
 
               {analysis && !isAnalyzing && (
-                <div className="mt-2.5 p-3 rounded-xl bg-rose-950/20 border border-rose-500/20 text-xs text-rose-200 leading-relaxed animate-in fade-in duration-150">
-                  <strong className="block text-rose-400 font-semibold mb-0.5">
+                <div className="mt-2.5 p-3.5 rounded-xl bg-rose-500/[0.06] border border-rose-500/20 text-xs text-zinc-200 leading-relaxed animate-in fade-in duration-150">
+                  <strong className="block text-rose-400 font-semibold mb-1">
                     {language === "pt" ? "Gatilho Lovix:" : "Lovix Dynamics:"}
                   </strong>
                   {analysis}
@@ -499,13 +499,13 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
       {/* Pro Callout Banner if user is on Free plan */}
       {!subscription?.isPro && onOpenPricing && (
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-zinc-900 via-rose-950/30 to-zinc-900 border border-rose-500/30 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg">
-          <div className="flex items-center gap-3 text-center sm:text-left">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center shrink-0 shadow-md">
-              <Crown className="w-5 h-5 text-black font-bold" />
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#111114] border border-amber-400/20 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+          <div className="flex items-center gap-3.5 text-center sm:text-left">
+            <div className="w-10 h-10 rounded-xl bg-amber-400/[0.08] border border-amber-400/20 flex items-center justify-center shrink-0">
+              <Crown className="w-5 h-5 text-amber-400" />
             </div>
             <div>
-              <span className="text-xs font-bold text-white block">
+              <span className="text-xs font-semibold text-white block">
                 {t.proBannerCallout}
               </span>
               <span className="text-[11px] text-zinc-400">
@@ -515,7 +515,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           </div>
           <button
             onClick={onOpenPricing}
-            className="w-full sm:w-auto px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-bold text-xs shadow-md shadow-rose-600/30 cursor-pointer transition-transform active:scale-95 shrink-0"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs shadow-md shadow-rose-950/50 cursor-pointer transition-all active:scale-95 shrink-0"
           >
             {t.exploreProBtn}
           </button>

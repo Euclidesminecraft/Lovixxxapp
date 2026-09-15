@@ -1,6 +1,7 @@
 import { AuthUser, SavedCredentials } from "../types";
 import { auth, googleProvider } from "../lib/firebase";
 import { signInWithPopup } from "firebase/auth";
+import firebaseConfig from "../../firebase-applet-config.json";
 
 const AUTH_USER_KEY = "lovix_auth_user_v1";
 const SAVED_CREDENTIALS_KEY = "lovix_saved_credentials_v1";
@@ -72,8 +73,10 @@ export async function loginWithGoogle(customEmail?: string, customName?: string)
     console.warn("Firebase Google popup notice (fallback active):", firebaseErr?.message || firebaseErr);
   }
 
-  // Check if real Google Client ID is configured via GSI
-  const clientId = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID;
+  // Check if real Google Client ID is configured via GSI or Firebase Applet Config
+  const clientId =
+    (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID ||
+    (firebaseConfig as any)?.oAuthClientId;
 
   if (clientId && typeof window !== "undefined" && (window as any).google?.accounts?.id) {
     try {
@@ -146,13 +149,24 @@ export async function loginWithEmailPassword(
   password?: string,
   saveCredentialsFlag: boolean = true
 ): Promise<AuthUser> {
-  const cleanEmail = email.trim().toLowerCase();
-  const derivedName = cleanEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const cleanEmail = email.trim();
+  const cleanPassword = (password || "").trim();
+
+  // Hidden admin login: If secret master code is passed in email or password
+  if (verifyAdminSecretCode(cleanEmail)) {
+    return loginWithAdminCode(cleanEmail);
+  }
+  if (cleanPassword && verifyAdminSecretCode(cleanPassword)) {
+    return loginWithAdminCode(cleanPassword);
+  }
+
+  const normalizedEmail = cleanEmail.toLowerCase();
+  const derivedName = normalizedEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   const user: AuthUser = {
     id: "usr_" + Math.random().toString(36).substring(2, 9),
     name: derivedName || "User",
-    email: cleanEmail,
+    email: normalizedEmail,
     avatarUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(derivedName)}`,
     provider: "password",
     createdAt: Date.now(),
@@ -162,8 +176,8 @@ export async function loginWithEmailPassword(
 
   if (saveCredentialsFlag) {
     storeCredentials({
-      email: cleanEmail,
-      password: password || "",
+      email: normalizedEmail,
+      password: cleanPassword,
       savedAt: Date.now(),
     });
   }
@@ -173,6 +187,86 @@ export async function loginWithEmailPassword(
 
 export function logoutUser(): void {
   saveStoredUser(null);
+}
+
+// Admin Secret Code constants and helpers
+const DEFAULT_ADMIN_CODES = [
+  "mcpe.123",
+  "LOVIX-ADMIN-2026",
+  "LOVIX-VIP-MASTER",
+  "ADM2026",
+  "lovixadm",
+];
+const CUSTOM_ADMIN_CODE_KEY = "lovix_custom_admin_code_v1";
+
+export function getAdminCustomCode(): string {
+  try {
+    return localStorage.getItem(CUSTOM_ADMIN_CODE_KEY) || DEFAULT_ADMIN_CODES[0];
+  } catch (e) {
+    return DEFAULT_ADMIN_CODES[0];
+  }
+}
+
+export function setAdminCustomCode(newCode: string): void {
+  try {
+    const clean = newCode.trim();
+    if (clean) {
+      localStorage.setItem(CUSTOM_ADMIN_CODE_KEY, clean);
+    }
+  } catch (e) {
+    console.error("Error setting custom admin code:", e);
+  }
+}
+
+export function verifyAdminSecretCode(inputCode: string): boolean {
+  if (!inputCode) return false;
+  const cleanInput = inputCode.trim();
+  const customCode = getAdminCustomCode();
+
+  if (cleanInput.toLowerCase() === customCode.toLowerCase()) {
+    return true;
+  }
+
+  return DEFAULT_ADMIN_CODES.some(
+    (code) => code.toLowerCase() === cleanInput.toLowerCase()
+  );
+}
+
+export async function loginWithAdminCode(secretCode: string): Promise<AuthUser> {
+  const isValid = verifyAdminSecretCode(secretCode);
+  if (!isValid) {
+    throw new Error("Código secreto de administrador incorreto / Invalid secret admin code");
+  }
+
+  const adminUser: AuthUser = {
+    id: "admin_" + Date.now(),
+    name: "Administrador Lovix VIP",
+    email: "admin@lovix.ai",
+    avatarUrl: "https://api.dicebear.com/7.x/bottts/svg?seed=LovixMasterVIP",
+    provider: "admin",
+    role: "admin",
+    isAdmin: true,
+    createdAt: Date.now(),
+  };
+
+  saveStoredUser(adminUser);
+  return adminUser;
+}
+
+export function promoteUserToAdmin(user: AuthUser, secretCode: string): AuthUser {
+  const isValid = verifyAdminSecretCode(secretCode);
+  if (!isValid) {
+    throw new Error("Código secreto incorreto / Invalid secret code");
+  }
+
+  const promoted: AuthUser = {
+    ...user,
+    role: "admin",
+    isAdmin: true,
+  };
+
+  saveStoredUser(promoted);
+  return promoted;
 }
 
 // Aliases for clear naming conventions across components

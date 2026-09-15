@@ -237,28 +237,28 @@ export const ContextForm: React.FC<ContextFormProps> = ({
         };
 
   return (
-    <div className="bg-zinc-900/90 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col gap-5">
+    <div className="bg-[#111114] border border-white/[0.08] rounded-2xl p-4 sm:p-6 shadow-[0_4px_24px_-2px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.04)] flex flex-col gap-5 sm:gap-6">
       {/* 1. Quick Scenario Presets */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-            <Zap className="w-3.5 h-3.5 text-amber-400" /> {t.scenariosTitle}
+          <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Zap className="w-3.5 h-3.5 text-zinc-400" /> {t.scenariosTitle}
           </span>
-          <span className="text-[10px] text-zinc-400">
-            {language === "pt" ? "1 clique" : "1 click"}
+          <span className="text-[10px] text-zinc-400 font-medium">
+            {language === "pt" ? "Atalhos rápidos" : "Quick presets"}
           </span>
         </div>
-        <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar -mx-1 px-1">
+        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar -mx-1 px-1">
           {presets.map((preset) => (
             <button
               key={preset.id}
               onClick={() => onApplyPreset(preset)}
-              className="shrink-0 px-2.5 py-1.5 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-rose-500/50 hover:bg-zinc-800/70 text-left transition-all cursor-pointer group"
+              className="shrink-0 px-3 py-2 rounded-xl bg-zinc-900/60 hover:bg-zinc-850 border border-white/[0.06] hover:border-white/[0.14] text-left transition-all cursor-pointer group"
             >
-              <span className="text-[10px] font-bold text-rose-400 block group-hover:text-rose-300">
+              <span className="text-[10px] font-semibold tracking-wide text-rose-400 block group-hover:text-rose-300">
                 {preset.badge}
               </span>
-              <span className="text-[11px] text-zinc-300 line-clamp-1 max-w-[140px]">
+              <span className="text-xs text-zinc-300 font-medium line-clamp-1 max-w-[140px]">
                 {preset.title}
               </span>
             </button>
@@ -269,18 +269,18 @@ export const ContextForm: React.FC<ContextFormProps> = ({
       {/* 2. Input Mode Switcher */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-            <MessageSquare className="w-3.5 h-3.5 text-rose-400" />{" "}
+          <span className="text-[11px] font-semibold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+            <MessageSquare className="w-3.5 h-3.5 text-rose-500" />{" "}
             {language === "pt" ? "Entrada da Conversa" : "Conversation Input"}
           </span>
 
-          <div className="flex bg-zinc-950 p-0.5 rounded-lg border border-zinc-800 text-[11px]">
+          <div className="inline-flex bg-zinc-950/90 p-1 rounded-xl border border-white/[0.06] text-xs">
             <button
               type="button"
               onClick={() => setInputMode("text")}
-              className={`px-2.5 py-1 rounded-md transition-all cursor-pointer font-medium ${
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer text-[11px] font-medium ${
                 inputMode === "text"
-                  ? "bg-zinc-800 text-white shadow-sm"
+                  ? "bg-zinc-800 text-white shadow-[0_1px_2px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)]"
                   : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -289,9 +289,9 @@ export const ContextForm: React.FC<ContextFormProps> = ({
             <button
               type="button"
               onClick={() => setInputMode("image")}
-              className={`px-2.5 py-1 rounded-md transition-all cursor-pointer font-medium ${
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer text-[11px] font-medium ${
                 inputMode === "image"
-                  ? "bg-zinc-800 text-white shadow-sm"
+                  ? "bg-zinc-800 text-white shadow-[0_1px_2px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)]"
                   : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -300,9 +300,9 @@ export const ContextForm: React.FC<ContextFormProps> = ({
             <button
               type="button"
               onClick={() => setInputMode("both")}
-              className={`px-2.5 py-1 rounded-md transition-all cursor-pointer font-medium ${
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer text-[11px] font-medium ${
                 inputMode === "both"
-                  ? "bg-zinc-800 text-white shadow-sm"
+                  ? "bg-zinc-800 text-white shadow-[0_1px_2px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)]"
                   : "text-zinc-400 hover:text-zinc-200"
               }`}
             >
@@ -336,7 +336,7 @@ export const ContextForm: React.FC<ContextFormProps> = ({
               {context.mensagem && (
                 <button
                   onClick={() => onChange({ mensagem: "" })}
-                  className="text-[10px] text-zinc-400 hover:text-rose-400 transition-colors cursor-pointer"
+                  className="text-[11px] text-zinc-400 hover:text-rose-400 transition-colors cursor-pointer"
                 >
                   {t.clear}
                 </button>
@@ -355,28 +355,28 @@ export const ContextForm: React.FC<ContextFormProps> = ({
                     : "e.g., 'Sent this 2 hours ago...' or leave empty for Lovix to analyze screenshot alone."
                   : t.placeholderText
               }
-              className="w-full bg-zinc-950 border border-zinc-800 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/20 rounded-xl p-3 text-sm text-zinc-100 placeholder-zinc-500 transition-all resize-none outline-none leading-relaxed"
+              className="w-full bg-zinc-950/80 border border-white/[0.08] focus:border-rose-500/70 focus:ring-2 focus:ring-rose-500/10 rounded-xl p-3.5 text-sm text-zinc-100 placeholder-zinc-500 transition-all resize-none outline-none leading-relaxed shadow-inner"
             />
           </div>
         )}
       </div>
 
       {/* 3. Strategic Direction */}
-      <div className="space-y-2.5 p-3.5 rounded-xl bg-zinc-950/70 border border-rose-500/25">
+      <div className="space-y-3 p-4 rounded-xl bg-zinc-950/50 border border-white/[0.06]">
         <div className="flex items-center justify-between">
-          <label className="text-[11px] font-bold text-rose-300 uppercase tracking-wider flex items-center gap-1.5">
+          <label className="text-[11px] font-semibold text-zinc-200 uppercase tracking-wider flex items-center gap-1.5">
             <Compass className="w-3.5 h-3.5 text-rose-400" />
             {language === "pt"
               ? "Rumo que a conversa deve seguir"
               : "Intended Conversation Direction"}
           </label>
-          <span className="text-[10px] text-zinc-400 font-mono">
+          <span className="text-[10px] text-zinc-400 font-medium">
             {language === "pt" ? "Estratégia" : "Strategy"}
           </span>
         </div>
 
-        {/* Suggested chips */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+        {/* Suggested direction cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {(showAllRumos ? RUMOS_SUGERIDOS : RUMOS_SUGERIDOS.slice(0, 4)).map(
             (rumo) => {
               const isSelected = context.rumoConversa === rumo.title;
@@ -389,14 +389,14 @@ export const ContextForm: React.FC<ContextFormProps> = ({
                       rumoConversa: isSelected ? "" : rumo.title,
                     })
                   }
-                  className={`p-2 rounded-lg text-left border transition-all cursor-pointer flex items-center gap-2 ${
+                  className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer flex items-center gap-2.5 ${
                     isSelected
-                      ? "bg-rose-950/50 border-rose-500 text-white ring-1 ring-rose-500/40"
-                      : "bg-zinc-900/50 border-zinc-800 text-zinc-300 hover:border-zinc-700 hover:text-white"
+                      ? "bg-rose-500/[0.08] border-rose-500/50 text-white shadow-[inset_0_1px_0_rgba(244,63,94,0.15)]"
+                      : "bg-zinc-900/40 border-white/[0.06] text-zinc-300 hover:bg-zinc-900/80 hover:border-white/[0.12] hover:text-white"
                   }`}
                 >
-                  <span className="text-sm shrink-0">{rumo.icon}</span>
-                  <span className="text-xs font-semibold truncate leading-tight">
+                  <span className="text-base shrink-0">{rumo.icon}</span>
+                  <span className="text-xs font-medium truncate leading-tight">
                     {rumo.title}
                   </span>
                 </button>
@@ -409,16 +409,16 @@ export const ContextForm: React.FC<ContextFormProps> = ({
           <button
             type="button"
             onClick={() => setShowAllRumos(!showAllRumos)}
-            className="text-[11px] text-zinc-400 hover:text-rose-400 flex items-center gap-1 cursor-pointer transition-colors"
+            className="text-[11px] text-zinc-400 hover:text-zinc-200 flex items-center gap-1 cursor-pointer transition-colors font-medium"
           >
             {showAllRumos ? (
               <>
-                <ChevronUp className="w-3 h-3" />{" "}
+                <ChevronUp className="w-3.5 h-3.5" />{" "}
                 {language === "pt" ? "Menos opções" : "Fewer options"}
               </>
             ) : (
               <>
-                <ChevronDown className="w-3 h-3" />{" "}
+                <ChevronDown className="w-3.5 h-3.5" />{" "}
                 {language === "pt"
                   ? `Ver mais rumos (${RUMOS_SUGERIDOS.length})`
                   : `See more directions (${RUMOS_SUGERIDOS.length})`}
@@ -430,7 +430,7 @@ export const ContextForm: React.FC<ContextFormProps> = ({
             <button
               type="button"
               onClick={() => onChange({ rumoConversa: "" })}
-              className="text-[10px] text-zinc-400 hover:text-rose-400 cursor-pointer"
+              className="text-[11px] text-zinc-400 hover:text-rose-400 cursor-pointer font-medium"
             >
               {language === "pt" ? "Limpar rumo" : "Clear direction"}
             </button>
@@ -448,7 +448,7 @@ export const ContextForm: React.FC<ContextFormProps> = ({
               ? "Ou digite seu rumo próprio (ex: Fazer ela marcar o date)..."
               : "Or type your custom direction (e.g., Get them to suggest dinner)..."
           }
-          className="w-full bg-zinc-900/90 border border-zinc-800 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 rounded-lg px-3 py-1.5 text-xs text-zinc-100 placeholder-zinc-500 outline-none transition-colors"
+          className="w-full bg-zinc-900/70 border border-white/[0.06] focus:border-rose-500/70 focus:ring-1 focus:ring-rose-500/20 rounded-xl px-3.5 py-2 text-xs text-zinc-100 placeholder-zinc-500 outline-none transition-colors"
         />
       </div>
 
@@ -456,15 +456,15 @@ export const ContextForm: React.FC<ContextFormProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Relationship */}
         <div className="space-y-1.5">
-          <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-            <Users className="w-3 h-3 text-rose-400" /> {t.relationshipLabel}
+          <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Users className="w-3.5 h-3.5 text-zinc-400" /> {t.relationshipLabel}
           </label>
           <select
             value={context.relacao}
             onChange={(e) =>
               onChange({ relacao: e.target.value as RelacaoTipo })
             }
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-200 outline-none focus:border-rose-500 transition-colors cursor-pointer"
+            className="w-full bg-zinc-950/80 border border-white/[0.08] rounded-xl px-3.5 py-2.5 text-xs text-zinc-200 outline-none focus:border-rose-500/70 transition-colors cursor-pointer"
           >
             {RELACOES_ITEMS.map((rel) => (
               <option
@@ -480,13 +480,13 @@ export const ContextForm: React.FC<ContextFormProps> = ({
 
         {/* Tone */}
         <div className="space-y-1.5">
-          <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1">
-            <Palette className="w-3 h-3 text-rose-400" /> {t.toneLabel}
+          <label className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Palette className="w-3.5 h-3.5 text-zinc-400" /> {t.toneLabel}
           </label>
           <select
             value={context.tom}
             onChange={(e) => onChange({ tom: e.target.value as EstiloTom })}
-            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-200 outline-none focus:border-rose-500 transition-colors cursor-pointer"
+            className="w-full bg-zinc-950/80 border border-white/[0.08] rounded-xl px-3.5 py-2.5 text-xs text-zinc-200 outline-none focus:border-rose-500/70 transition-colors cursor-pointer"
           >
             {ESTILOS_ITEMS.map((est) => (
               <option
@@ -502,13 +502,13 @@ export const ContextForm: React.FC<ContextFormProps> = ({
       </div>
 
       {/* 5. Tension & Audacity Level */}
-      <div className="space-y-2 p-3 rounded-xl bg-zinc-950/60 border border-zinc-800/80">
+      <div className="space-y-3 p-4 rounded-xl bg-zinc-950/50 border border-white/[0.06]">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+          <span className="text-[11px] font-semibold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
             <Flame className="w-3.5 h-3.5 text-rose-500" /> {t.audacityLabel}
           </span>
           <span
-            className={`text-xs font-bold ${
+            className={`text-xs font-semibold ${
               OUSADIA_LABELS[context.ousadia]?.color || "text-rose-400"
             }`}
           >
@@ -516,24 +516,32 @@ export const ContextForm: React.FC<ContextFormProps> = ({
           </span>
         </div>
 
-        <input
-          id="slider-ousadia"
-          type="range"
-          min={1}
-          max={5}
-          step={1}
-          value={context.ousadia}
-          onChange={(e) => handleSliderChange(parseInt(e.target.value, 10))}
-          className="w-full accent-rose-500 cursor-pointer h-2 bg-zinc-800 rounded-lg"
-        />
+        {/* Audacity Level Selector buttons for crisp feedback */}
+        <div className="grid grid-cols-5 gap-1.5">
+          {[1, 2, 3, 4, 5].map((lvl) => {
+            const isLvl = context.ousadia === lvl;
+            return (
+              <button
+                key={lvl}
+                type="button"
+                onClick={() => handleSliderChange(lvl)}
+                className={`py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
+                  isLvl
+                    ? "bg-rose-600 text-white border-rose-500 shadow-sm"
+                    : "bg-zinc-900/60 border-white/[0.06] text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+                }`}
+              >
+                {lvl}
+              </button>
+            );
+          })}
+        </div>
 
-        <div className="flex justify-between text-[9px] text-zinc-400 font-mono">
-          <span>{language === "pt" ? "1. Sutil" : "1. Subtle"}</span>
-          <span>{language === "pt" ? "2. Leve" : "2. Light"}</span>
-          <span>{language === "pt" ? "3. Balanceado" : "3. Balanced"}</span>
-          <span>{language === "pt" ? "4. Provocador" : "4. Playful"}</span>
-          <span className="text-rose-400 font-bold">
-            {language === "pt" ? "5. Alta Tensão" : "5. High Tension"}
+        <div className="flex justify-between text-[10px] text-zinc-400 font-medium px-0.5">
+          <span>{language === "pt" ? "Sutil" : "Subtle"}</span>
+          <span>{language === "pt" ? "Equilibrado" : "Balanced"}</span>
+          <span className="text-rose-400 font-semibold">
+            {language === "pt" ? "Alta Tensão" : "High Tension"}
           </span>
         </div>
       </div>
@@ -544,9 +552,9 @@ export const ContextForm: React.FC<ContextFormProps> = ({
           id="generate-responses-btn"
           type="button"
           onClick={onOpenPricing}
-          className="w-full py-3.5 px-4 rounded-xl font-bold text-sm tracking-wide bg-gradient-to-r from-amber-500 via-rose-600 to-pink-600 text-white shadow-lg shadow-rose-600/30 flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all"
+          className="w-full py-3.5 px-4 rounded-xl font-semibold text-sm tracking-wide bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 text-white shadow-lg shadow-rose-950/50 flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99] transition-all"
         >
-          <Crown className="w-4 h-4 text-amber-300" />
+          <Crown className="w-4 h-4 text-amber-200" />
           <span>
             {language === "pt"
               ? "Créditos diários esgotados • Ativar Lovix PRO"
@@ -563,10 +571,10 @@ export const ContextForm: React.FC<ContextFormProps> = ({
             onSubmit();
           }}
           disabled={!canSubmit}
-          className={`w-full py-3.5 px-4 rounded-xl font-bold text-sm tracking-wide transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer ${
+          className={`w-full py-3.5 px-4 rounded-xl font-medium text-sm tracking-wide transition-all flex items-center justify-center gap-2 cursor-pointer ${
             !canSubmit
-              ? "bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700/40"
-              : "bg-gradient-to-r from-rose-600 via-pink-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white shadow-rose-600/30 hover:shadow-rose-600/40 active:scale-[0.99]"
+              ? "bg-zinc-900 text-zinc-500 cursor-not-allowed border border-white/[0.04]"
+              : "bg-rose-600 hover:bg-rose-500 active:bg-rose-700 text-white shadow-[0_1px_2px_rgba(0,0,0,0.5),0_4px_16px_rgba(225,29,72,0.25),inset_0_1px_0_rgba(255,255,255,0.2)] active:scale-[0.99]"
           }`}
         >
           {isLoading ? (
@@ -595,10 +603,10 @@ export const ContextForm: React.FC<ContextFormProps> = ({
         </button>
       )}
 
-      <div className="flex items-center justify-between text-[11px] text-zinc-400 px-1">
+      <div className="flex items-center justify-between text-[11px] text-zinc-400 px-1 -mt-2">
         <span>
           {language === "pt" ? "Atalho:" : "Shortcut:"}{" "}
-          <kbd className="px-1 py-0.2 rounded bg-zinc-800 text-zinc-300 font-mono text-[10px]">
+          <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 border border-white/[0.06] text-zinc-300 font-mono text-[10px]">
             Ctrl+Enter
           </kbd>
         </span>
@@ -606,7 +614,7 @@ export const ContextForm: React.FC<ContextFormProps> = ({
           <button
             type="button"
             onClick={onOpenPricing}
-            className="text-rose-400 hover:underline cursor-pointer font-medium"
+            className="text-rose-400 hover:text-rose-300 hover:underline cursor-pointer font-medium"
           >
             {language === "pt"
               ? "Quer gerações ilimitadas? Seja PRO"

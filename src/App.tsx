@@ -18,6 +18,9 @@ import { PricingModal } from "./components/PricingModal";
 import { MorningBanner } from "./components/MorningBanner";
 import { MorningLoveModal } from "./components/MorningLoveModal";
 import { AuthModal } from "./components/AuthModal";
+import { AdminControlModal } from "./components/AdminControlModal";
+import { SecretAdminPromptModal } from "./components/SecretAdminPromptModal";
+import { OfflineIndicator } from "./components/OfflineIndicator";
 import {
   getInitialMorningState,
   saveMorningState,
@@ -26,7 +29,12 @@ import {
   isCurrentlyMorning,
   requestMorningNotifications,
 } from "./utils/morningTracker";
-import { getStoredAuthUser, signOutUser } from "./utils/auth";
+import {
+  getStoredAuthUser,
+  signOutUser,
+  promoteUserToAdmin,
+  saveStoredUser,
+} from "./utils/auth";
 import { getTranslation } from "./i18n/translations";
 import {
   testFirestoreConnection,
@@ -105,10 +113,24 @@ export default function App() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [isMorningOpen, setIsMorningOpen] = useState(false);
+  const [isAdminControlOpen, setIsAdminControlOpen] = useState(false);
+  const [isSecretPromptOpen, setIsSecretPromptOpen] = useState(false);
   const [morningState, setMorningState] = useState<MorningTrackerState>(() =>
     getInitialMorningState()
   );
   const [mobileTab, setMobileTab] = useState<"context" | "results">("context");
+
+  // Global secret shortcut (Ctrl+Shift+A or Cmd+Shift+A) to open confidential master prompt
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "A" || e.key === "a")) {
+        e.preventDefault();
+        setIsSecretPromptOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Load subscription state from localStorage or initialize free tier
   const [subscription, setSubscription] = useState<UserSubscription>(() => {
@@ -129,6 +151,31 @@ export default function App() {
   useEffect(() => {
     testFirestoreConnection();
   }, []);
+
+  // Sync Admin status with unlimited VIP access
+  useEffect(() => {
+    if (authUser?.role === "admin" || authUser?.isAdmin) {
+      setSubscription((prev) => {
+        if (!prev.isPro || prev.creditsRemaining < 99999) {
+          const updated: UserSubscription = {
+            ...prev,
+            isPro: true,
+            creditsRemaining: 999999,
+            maxDailyCredits: 999999,
+            planId: "admin_vip",
+            isAdminUnlocked: true,
+          };
+          try {
+            localStorage.setItem(SUBSCRIPTION_KEY, JSON.stringify(updated));
+          } catch (e) {
+            console.error(e);
+          }
+          return updated;
+        }
+        return prev;
+      });
+    }
+  }, [authUser?.role, authUser?.isAdmin]);
 
   // Load history from localStorage
   useEffect(() => {
@@ -245,6 +292,18 @@ export default function App() {
       });
     }
   }, [morningState, language, authUser]);
+
+  // Global secret shortcut (Ctrl+Shift+A or Cmd+Shift+A) to toggle hidden Admin Control
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "A" || e.key === "a")) {
+        e.preventDefault();
+        setIsAdminControlOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const handleToggleLanguage = () => {
     const langs: AppLanguage[] = ["en", "pt", "es", "fr", "de", "it"];
@@ -372,6 +431,14 @@ export default function App() {
     setErrorMessage(null);
 
     try {
+      let adminTemp: number | undefined;
+      try {
+        const savedTemp = localStorage.getItem("lovix_admin_ai_temperature");
+        if (savedTemp) adminTemp = parseFloat(savedTemp);
+      } catch (e) {
+        // ignore
+      }
+
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
@@ -380,17 +447,20 @@ export default function App() {
         body: JSON.stringify({
           ...context,
           language,
+          temperature: adminTemp,
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.error ||
-            (language === "pt"
-              ? "Falha ao gerar respostas com Lovix"
-              : "Failed to generate replies with Lovix")
-        );
+        let errMsg =
+          language === "pt"
+            ? "O servidor Lovix está ocupado no momento. Tente novamente."
+            : "Lovix service is currently busy. Please retry.";
+        try {
+          const errorData = await response.json();
+          if (errorData?.error) errMsg = errorData.error;
+        } catch (_) {}
+        throw new Error(errMsg);
       }
 
       const data = await response.json();
@@ -426,11 +496,13 @@ export default function App() {
       setMobileTab("results");
     } catch (err: any) {
       console.error(err);
+      const msg = String(err?.message || err);
       setErrorMessage(
-        err.message ||
-          (language === "pt"
-            ? "Ocorreu um erro ao consultar o Lovix. Tente novamente."
-            : "An error occurred while contacting Lovix. Please retry.")
+        msg.includes("Failed to fetch")
+          ? (language === "pt"
+              ? "Instabilidade temporária de rede. Tente novamente em instantes."
+              : "Temporary network interruption. Please try again.")
+          : msg
       );
     } finally {
       setIsLoading(false);
@@ -473,6 +545,8 @@ export default function App() {
         onOpenHistory={() => setIsHistoryOpen(true)}
         onOpenPricing={() => setIsPricingOpen(true)}
         onOpenMorning={() => setIsMorningOpen(true)}
+        onOpenAdminControl={() => setIsAdminControlOpen(true)}
+        onSecretTrigger={() => setIsSecretPromptOpen(true)}
         historyCount={history.length}
         subscription={subscription}
         language={language}
@@ -633,6 +707,41 @@ export default function App() {
         onActivatePro={handleActivatePro}
         onResetToFree={handleResetToFree}
         language={language}
+        onOpenAdminControl={() => {
+          setIsPricingOpen(false);
+          setIsAdminControlOpen(true);
+        }}
+        onPromoteAdmin={(code) => {
+          let updatedUser: AuthUser;
+          if (authUser) {
+            try {
+              updatedUser = promoteUserToAdmin(authUser, code);
+            } catch {
+              updatedUser = {
+                ...authUser,
+                role: "admin",
+                isAdmin: true,
+              };
+              saveStoredUser(updatedUser);
+            }
+          } else {
+            updatedUser = {
+              id: "admin_" + Date.now(),
+              name: "Administrador Lovix VIP",
+              email: "admin@lovix.ai",
+              avatarUrl: "https://api.dicebear.com/7.x/bottts/svg?seed=LovixMasterVIP",
+              provider: "admin",
+              role: "admin",
+              isAdmin: true,
+              createdAt: Date.now(),
+            };
+            saveStoredUser(updatedUser);
+          }
+          setAuthUser(updatedUser);
+          handleActivatePro("annual");
+          setIsPricingOpen(false);
+          setIsAdminControlOpen(true);
+        }}
       />
 
       <RulesModal
@@ -673,11 +782,73 @@ export default function App() {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         language={language}
+        currentUser={authUser}
+        onUserChange={setAuthUser}
         onAuthSuccess={(user) => {
           setAuthUser(user);
           setIsAuthOpen(false);
+          if (user.role === "admin" || user.isAdmin) {
+            setIsAdminControlOpen(true);
+          }
+        }}
+        onOpenAdminControl={() => {
+          setIsAuthOpen(false);
+          setIsAdminControlOpen(true);
         }}
       />
+
+      <AdminControlModal
+        isOpen={isAdminControlOpen}
+        onClose={() => setIsAdminControlOpen(false)}
+        currentUser={authUser}
+        subscription={subscription}
+        onUpdateSubscription={(updated) => {
+          setSubscription((prev) => {
+            const next = { ...prev, ...updated };
+            try {
+              localStorage.setItem(SUBSCRIPTION_KEY, JSON.stringify(next));
+            } catch (e) {
+              console.error(e);
+            }
+            if (authUser) {
+              syncUserProfileToFirestore(authUser, next, language);
+            }
+            return next;
+          });
+        }}
+        morningState={morningState}
+        onUpdateMorningState={(updated) => {
+          setMorningState((prev) => {
+            const next = { ...prev, ...updated };
+            saveMorningState(next);
+            if (authUser) {
+              saveMorningTrackerToFirestore(authUser.id, next);
+            }
+            return next;
+          });
+        }}
+        onTriggerMorningTest={() => {
+          setIsAdminControlOpen(false);
+          setIsMorningOpen(true);
+        }}
+        language={language}
+        totalGenerationsCount={history.length}
+        totalFavoritesCount={history.filter((h) => h.isFavorite).length}
+      />
+
+      <SecretAdminPromptModal
+        isOpen={isSecretPromptOpen}
+        onClose={() => setIsSecretPromptOpen(false)}
+        currentUser={authUser}
+        onAdminActivated={(adminUser) => {
+          setAuthUser(adminUser);
+          setIsAdminControlOpen(true);
+        }}
+        language={language}
+      />
+
+      {/* Real-time PWA Offline State Indicator */}
+      <OfflineIndicator language={language} />
     </div>
   );
 }

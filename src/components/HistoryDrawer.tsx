@@ -50,13 +50,15 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-zinc-900 border-l border-zinc-800 w-full max-w-md h-full flex flex-col p-6 shadow-2xl text-zinc-200">
-        <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
-          <div className="flex items-center gap-2">
-            <History className="w-5 h-5 text-amber-400" />
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-[#111114] border-l border-white/[0.08] w-full max-w-md h-full flex flex-col p-6 shadow-[0_24px_60px_rgba(0,0,0,0.8)] text-zinc-200">
+        <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400">
+              <History className="w-4 h-4" />
+            </div>
             <div>
-              <h2 className="text-base font-bold text-white">
+              <h2 className="text-sm font-semibold text-white tracking-tight">
                 {t.historyDrawerTitle}
               </h2>
               <p className="text-xs text-zinc-400">
@@ -73,10 +75,10 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 border border-transparent hover:border-white/[0.06] transition-colors cursor-pointer"
             aria-label="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -84,7 +86,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
         <div className="flex-1 overflow-y-auto py-4 space-y-3">
           {history.length === 0 ? (
             <div className="text-center py-16 text-zinc-500">
-              <History className="w-8 h-8 mx-auto mb-2 opacity-40" />
+              <History className="w-8 h-8 mx-auto mb-2 opacity-30" />
               <p className="text-xs">
                 {language === "pt"
                   ? "Nenhum histórico ainda."
@@ -110,10 +112,10 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                     onSelect(item);
                     onClose();
                   }}
-                  className="p-3.5 rounded-xl bg-zinc-950 border border-zinc-800/90 hover:border-rose-500/40 hover:bg-zinc-900/60 transition-all cursor-pointer group space-y-2"
+                  className="p-3.5 rounded-xl bg-[#16161b] border border-white/[0.06] hover:border-white/[0.15] hover:bg-[#1a1a20] transition-all cursor-pointer group space-y-2"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[10px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
+                    <span className="text-[10px] font-medium text-rose-300 bg-rose-500/10 px-2 py-0.5 rounded-full border border-rose-500/20">
                       {item.context.tom}
                     </span>
                     <div className="flex items-center gap-1.5">
@@ -160,7 +162,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                     <span className="text-[11px] text-zinc-500 block">
                       {language === "pt" ? "Recebida:" : "Received:"}
                     </span>
-                    <p className="text-xs text-zinc-300 font-medium line-clamp-2">
+                    <p className="text-xs text-zinc-300 font-normal line-clamp-2">
                       "{item.context.mensagem}"
                     </p>
                   </div>
@@ -170,7 +172,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
                       {item.options.length}{" "}
                       {language === "pt" ? "opções" : "options"}
                     </span>
-                    <span className="text-rose-400 group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                    <span className="text-rose-400 group-hover:translate-x-0.5 transition-transform flex items-center gap-1 font-medium">
                       {language === "pt" ? "Carregar" : "Load"}{" "}
                       <CornerDownLeft className="w-3 h-3" />
                     </span>
@@ -182,7 +184,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
         </div>
 
         {history.length > 0 && (
-          <div className="pt-4 border-t border-zinc-800 flex justify-between">
+          <div className="pt-4 border-t border-white/[0.06] flex justify-between">
             <button
               onClick={onClear}
               className="text-xs text-zinc-400 hover:text-rose-400 flex items-center gap-1.5 transition-colors cursor-pointer"
@@ -192,7 +194,7 @@ export const HistoryDrawer: React.FC<HistoryDrawerProps> = ({
             </button>
             <button
               onClick={onClose}
-              className="px-4 py-1.5 text-xs font-semibold rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white transition-colors cursor-pointer"
+              className="px-4 py-1.5 text-xs font-medium rounded-xl bg-zinc-800 hover:bg-zinc-750 text-white transition-colors cursor-pointer border border-white/[0.06]"
             >
               {t.close}
             </button>

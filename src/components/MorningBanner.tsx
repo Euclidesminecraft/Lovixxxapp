@@ -59,23 +59,23 @@ export const MorningBanner: React.FC<MorningBannerProps> = ({
   };
 
   return (
-    <div className="mb-4 rounded-2xl bg-gradient-to-r from-amber-950/40 via-rose-950/30 to-zinc-900 border border-amber-500/30 p-3 sm:p-4 shadow-lg transition-all animate-in fade-in duration-200">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
-            <Sun className="w-4 h-4 text-amber-300 animate-spin-slow" />
+    <div className="mb-5 rounded-2xl bg-[#121215] border border-white/[0.08] p-3.5 sm:p-4 shadow-[0_2px_12px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.04)] transition-all animate-in fade-in duration-150">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-amber-400/[0.08] border border-amber-400/20 flex items-center justify-center text-amber-300 shrink-0">
+            <Sun className="w-4 h-4 text-amber-400" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-black text-white tracking-wide flex items-center gap-1.5">
-                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+              <span className="text-xs font-semibold text-white tracking-normal flex items-center gap-1.5">
+                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500/80" />
                 {t.morningBannerTitle}
               </span>
-              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <span className="text-[10px] font-medium uppercase px-2 py-0.5 rounded-full bg-amber-400/[0.08] text-amber-300 border border-amber-400/20">
                 {t.morningDayBadge(currentDay, daysRemaining)}
               </span>
             </div>
-            <span className="text-[11px] text-zinc-400 block sm:inline">
+            <span className="text-[11px] text-zinc-400 block sm:inline mt-0.5">
               {t.morningBannerSubtitle}
             </span>
           </div>
@@ -84,7 +84,7 @@ export const MorningBanner: React.FC<MorningBannerProps> = ({
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800/80 transition-colors cursor-pointer"
             title={isCollapsed ? "Expand" : "Collapse"}
           >
             {isCollapsed ? (
@@ -97,9 +97,9 @@ export const MorningBanner: React.FC<MorningBannerProps> = ({
       </div>
 
       {!isCollapsed && (
-        <div className="mt-3 pt-3 border-t border-zinc-800/80 space-y-3">
-          <div className="bg-zinc-950/70 p-3 rounded-xl border border-zinc-800/80">
-            <p className="text-xs sm:text-sm text-zinc-200 font-medium leading-relaxed italic">
+        <div className="mt-3 pt-3 border-t border-white/[0.06] space-y-3">
+          <div className="bg-zinc-950/80 p-3.5 rounded-xl border border-white/[0.06]">
+            <p className="text-xs sm:text-sm text-zinc-200 font-normal leading-relaxed italic">
               "{todayPhrase.phrase}"
             </p>
           </div>
@@ -109,7 +109,7 @@ export const MorningBanner: React.FC<MorningBannerProps> = ({
               {/* Copy Button */}
               <button
                 onClick={handleCopy}
-                className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95"
+                className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-white/[0.08] font-medium flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95"
               >
                 {isCopied ? (
                   <>
@@ -129,7 +129,7 @@ export const MorningBanner: React.FC<MorningBannerProps> = ({
                 href={buildWhatsAppLink(todayPhrase.phrase)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 no-underline shadow-sm"
+                className="px-3 py-1.5 rounded-lg bg-[#25D366]/20 hover:bg-[#25D366]/30 text-emerald-300 border border-[#25D366]/30 font-medium flex items-center gap-1.5 transition-colors cursor-pointer active:scale-95 no-underline"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>{t.sendWhatsApp}</span>
@@ -140,10 +140,10 @@ export const MorningBanner: React.FC<MorningBannerProps> = ({
               {/* Notification Button */}
               <button
                 onClick={handleNotificationClick}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer border ${
                   notificationsEnabled
-                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                    : "bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300"
+                    ? "bg-amber-400/[0.08] text-amber-300 border-amber-400/20"
+                    : "bg-zinc-900 text-zinc-400 hover:text-zinc-200 border-white/[0.06] hover:bg-zinc-800"
                 }`}
                 title="Morning notification alert"
               >
@@ -163,9 +163,9 @@ export const MorningBanner: React.FC<MorningBannerProps> = ({
               {/* View all 14 days */}
               <button
                 onClick={onOpenModal}
-                className="px-3 py-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/40 border border-rose-500/30 text-rose-300 font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white font-medium flex items-center gap-1 cursor-pointer transition-colors"
               >
-                <Calendar className="w-3.5 h-3.5 text-rose-400" />
+                <Calendar className="w-3.5 h-3.5 text-zinc-400" />
                 <span>{t.view14Days}</span>
               </button>
             </div>

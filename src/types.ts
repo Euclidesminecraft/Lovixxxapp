@@ -64,8 +64,9 @@ export interface UserSubscription {
   isPro: boolean;
   creditsRemaining: number;
   maxDailyCredits: number;
-  planId?: PlanPeriod;
+  planId?: PlanPeriod | "admin_vip";
   activatedAt?: number;
+  isAdminUnlocked?: boolean;
 }
 
 export interface MorningLovePhrase {
@@ -107,7 +108,9 @@ export interface AuthUser {
   name: string;
   email: string;
   avatarUrl?: string;
-  provider: "google" | "password";
+  provider: "google" | "password" | "admin";
+  role?: "admin" | "user";
+  isAdmin?: boolean;
   createdAt: number;
 }
 

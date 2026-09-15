@@ -7,9 +7,11 @@ import {
   ShieldCheck,
   CheckCircle2,
   LogOut,
-  Sparkles,
   KeyRound,
   Trash2,
+  Crown,
+  Sliders,
+  AlertCircle,
 } from "lucide-react";
 import { AuthUser, AppLanguage } from "../types";
 import {
@@ -18,14 +20,18 @@ import {
   loginWithGoogle,
   loginWithEmailPassword,
   logoutUser,
+  loginWithAdminCode,
+  promoteUserToAdmin,
 } from "../utils/auth";
 import { getTranslation } from "../i18n/translations";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  currentUser: AuthUser | null;
-  onUserChange: (user: AuthUser | null) => void;
+  currentUser?: AuthUser | null;
+  onUserChange?: (user: AuthUser | null) => void;
+  onAuthSuccess?: (user: AuthUser) => void;
+  onOpenAdminControl?: () => void;
   language: AppLanguage;
 }
 
@@ -34,6 +40,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   currentUser,
   onUserChange,
+  onAuthSuccess,
+  onOpenAdminControl,
   language,
 }) => {
   const t = getTranslation(language);
@@ -45,6 +53,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [hasSavedCredentials, setHasSavedCredentials] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+
+  // Hidden admin unlock mechanism (activated by secret tap or key combo)
+  const [secretTapCount, setSecretTapCount] = useState(0);
+  const [showSecretUnlock, setShowSecretUnlock] = useState(false);
+  const [secretCodeInput, setSecretCodeInput] = useState("");
+  const [adminError, setAdminError] = useState<string | null>(null);
+
+  const updateUser = (user: AuthUser | null) => {
+    if (onUserChange) onUserChange(user);
+    if (user && onAuthSuccess) onAuthSuccess(user);
+  };
 
   // Load saved credentials on mount or when modal opens
   useEffect(() => {
@@ -61,21 +80,34 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         setHasSavedCredentials(false);
       }
       setFeedbackMessage(null);
+      setAdminError(null);
+      setShowSecretUnlock(false);
+      setSecretTapCount(0);
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  const handleSecretIconTap = () => {
+    const next = secretTapCount + 1;
+    if (next >= 5) {
+      setShowSecretUnlock(true);
+      setSecretTapCount(0);
+    } else {
+      setSecretTapCount(next);
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setFeedbackMessage(null);
     try {
       const user = await loginWithGoogle();
-      onUserChange(user);
+      updateUser(user);
       setFeedbackMessage(t.authSuccessLogin);
       setTimeout(() => {
         onClose();
-      }, 1000);
+      }, 900);
     } catch (err) {
       console.error(err);
     } finally {
@@ -95,18 +127,62 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         password,
         rememberCredentials
       );
-      onUserChange(user);
+      updateUser(user);
       setFeedbackMessage(
-        tab === "login" ? t.authSuccessLogin : t.authSuccessSignup
+        user.role === "admin"
+          ? (language === "pt" ? "Acesso Master Desbloqueado." : "Master Access Unlocked.")
+          : tab === "login"
+          ? t.authSuccessLogin
+          : t.authSuccessSignup
       );
       if (rememberCredentials) {
         setHasSavedCredentials(true);
       }
       setTimeout(() => {
         onClose();
-      }, 1000);
+        if (user.role === "admin" && onOpenAdminControl) {
+          onOpenAdminControl();
+        }
+      }, 900);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSecretUnlockSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!secretCodeInput.trim()) return;
+    setAdminError(null);
+    setIsLoading(true);
+
+    try {
+      let adminUser: AuthUser;
+      if (currentUser) {
+        adminUser = promoteUserToAdmin(currentUser, secretCodeInput.trim());
+      } else {
+        adminUser = await loginWithAdminCode(secretCodeInput.trim());
+      }
+      updateUser(adminUser);
+      setShowSecretUnlock(false);
+      setFeedbackMessage(
+        language === "pt"
+          ? "Acesso Mestre Confirmado."
+          : "Master Access Confirmed."
+      );
+      setTimeout(() => {
+        onClose();
+        if (onOpenAdminControl) {
+          onOpenAdminControl();
+        }
+      }, 800);
+    } catch (err) {
+      setAdminError(
+        language === "pt"
+          ? "Chave secreta inválida."
+          : "Invalid secret key."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -126,9 +202,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const handleLogout = () => {
     logoutUser();
-    onUserChange(null);
+    updateUser(null);
     onClose();
   };
+
+  const isCurrentAdmin = currentUser?.role === "admin" || currentUser?.isAdmin;
 
   return (
     <div
@@ -145,9 +223,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-zinc-800 bg-zinc-950/60 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+            {/* Discreet secret tap on this icon reveals the master key prompt after 5 taps */}
+            <button
+              type="button"
+              onClick={handleSecretIconTap}
+              className="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 cursor-default select-none focus:outline-none"
+              title=""
+            >
               <KeyRound className="w-4 h-4" />
-            </div>
+            </button>
             <div>
               <h3 className="text-base font-bold text-zinc-100 flex items-center gap-1.5">
                 {currentUser ? t.manageAccount : t.authModalTitle}
@@ -173,27 +257,96 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           )}
 
+          {adminError && (
+            <div className="p-3 bg-rose-950/40 border border-rose-500/40 rounded-xl text-rose-300 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+              <span>{adminError}</span>
+            </div>
+          )}
+
+          {/* Secret Master Key Drawer (Only appears when secret gesture triggered) */}
+          {showSecretUnlock && (
+            <div className="p-3 bg-zinc-950 border border-zinc-800 rounded-xl space-y-2 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
+                <span className="flex items-center gap-1 text-zinc-300">
+                  <Lock className="w-3.5 h-3.5 text-zinc-400" />
+                  {language === "pt" ? "Chave Confidencial" : "Confidential Key"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowSecretUnlock(false)}
+                  className="text-zinc-500 hover:text-zinc-300 text-[10px]"
+                >
+                  {t.close}
+                </button>
+              </div>
+              <form onSubmit={handleSecretUnlockSubmit} className="flex gap-2">
+                <input
+                  type="password"
+                  autoFocus
+                  value={secretCodeInput}
+                  onChange={(e) => setSecretCodeInput(e.target.value)}
+                  placeholder="••••••••••"
+                  className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-500 font-mono"
+                />
+                <button
+                  type="submit"
+                  disabled={isLoading || !secretCodeInput.trim()}
+                  className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs rounded-lg cursor-pointer transition-colors disabled:opacity-50"
+                >
+                  OK
+                </button>
+              </form>
+            </div>
+          )}
+
           {currentUser ? (
-            /* Logged in state */
+            /* Logged in state - Pure, clean, no public admin buttons */
             <div className="space-y-4">
               <div className="p-4 bg-zinc-950/80 border border-zinc-800 rounded-xl flex items-center gap-3">
-                <img
-                  src={currentUser.avatarUrl || "https://api.dicebear.com/7.x/initials/svg?seed=User"}
-                  alt={currentUser.name}
-                  className="w-12 h-12 rounded-full border border-rose-500/40 bg-zinc-900 object-cover"
-                />
+                <button
+                  type="button"
+                  onClick={handleSecretIconTap}
+                  className="cursor-default focus:outline-none"
+                >
+                  <img
+                    src={currentUser.avatarUrl || "https://api.dicebear.com/7.x/initials/svg?seed=User"}
+                    alt={currentUser.name}
+                    className="w-12 h-12 rounded-full border border-rose-500/40 bg-zinc-900 object-cover"
+                  />
+                </button>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-bold text-zinc-100 truncate">
                       {currentUser.name}
                     </h4>
-                    <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded">
-                      {currentUser.provider === "google" ? "Google" : "Email"}
-                    </span>
+                    {isCurrentAdmin ? (
+                      <span className="px-1.5 py-0.5 text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded flex items-center gap-1">
+                        <Crown className="w-2.5 h-2.5 text-amber-300" /> VIP
+                      </span>
+                    ) : (
+                      <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded">
+                        {currentUser.provider === "google" ? "Google" : "Email"}
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-zinc-400 truncate">{currentUser.email}</p>
                 </div>
               </div>
+
+              {/* Discreet Control Access for Admin */}
+              {isCurrentAdmin && onOpenAdminControl && (
+                <button
+                  onClick={() => {
+                    onClose();
+                    onOpenAdminControl();
+                  }}
+                  className="w-full py-2 px-3 bg-zinc-800/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold rounded-xl border border-zinc-700/80 flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                >
+                  <Sliders className="w-3.5 h-3.5 text-zinc-400" />
+                  <span>{t.adminControlPanel}</span>
+                </button>
+              )}
 
               {/* Saved Credentials Status */}
               <div className="p-3 bg-zinc-950/50 border border-zinc-800/80 rounded-xl flex items-center justify-between text-xs">
@@ -230,7 +383,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
             </div>
           ) : (
-            /* Logged out state: Sign In / Create Account Form */
+            /* Logged out state: ONLY 2 tabs (Login and Signup). No public admin tab. */
             <div className="space-y-4">
               {/* Google Sign In Button */}
               <button
@@ -240,7 +393,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 disabled={isLoading}
                 className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-white hover:bg-zinc-100 text-zinc-900 font-semibold text-xs sm:text-sm rounded-xl shadow-md transition-all cursor-pointer disabled:opacity-50"
               >
-                {/* Official Google G SVG icon */}
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
@@ -269,8 +421,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </span>
               </div>
 
-              {/* Tabs: Login vs Sign Up */}
-              <div className="flex bg-zinc-950 p-1 rounded-xl border border-zinc-800">
+              {/* Standard tabs: Login vs Sign Up only */}
+              <div className="flex bg-zinc-950 p-1 rounded-xl border border-zinc-800 gap-1">
                 <button
                   type="button"
                   onClick={() => setTab("login")}
@@ -295,7 +447,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </button>
               </div>
 
-              {/* Form */}
+              {/* Email/Password form */}
               <form onSubmit={handleEmailAuth} className="space-y-3.5">
                 {tab === "signup" && (
                   <div>
@@ -322,7 +474,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <div className="relative">
                     <Mail className="w-4 h-4 text-zinc-400 absolute left-3 top-2.5" />
                     <input
-                      type="email"
+                      type="text"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -349,7 +501,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 </div>
 
-                {/* Save Email & Password Checkbox (Requested by user) */}
+                {/* Save Email & Password Checkbox */}
                 <div className="p-3 bg-zinc-950/70 border border-zinc-800/80 rounded-xl space-y-1">
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input

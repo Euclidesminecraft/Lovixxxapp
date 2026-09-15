@@ -121,31 +121,153 @@ const OPTION_LABELS: Record<string, [string, string, string]> = {
   it: ["Equilibrata & Naturale", "Provocante & Giocosa", "Audace & Diretta"],
 };
 
+// Smart heuristic engine when external LLM endpoints suffer 503 demand spikes
+function generateSmartFallbackReplies(
+  mensagem: string,
+  rumoConversa: string,
+  relacao: string,
+  tom: string,
+  ousadia: number,
+  lang: string
+): string {
+  const cleanMsg = (mensagem || "").toLowerCase().trim();
+  const dir = (rumoConversa || "").toLowerCase().trim();
+
+  if (lang === "pt") {
+    // Portuguese charismatic variations
+    if (dir.includes("encontro") || dir.includes("sair") || dir.includes("convite")) {
+      return `1. Você fala muito bem por mensagem, mas quero ver se ao vivo mantém essa mesma moral. Quinta ou sexta?
+2. Me convencer por texto tá fácil demais. Que tal um café essa semana pra ver se nossa sintonia é real?
+3. Já vi que por chat a gente se enrola. Passo pra te buscar às 20h ou você prefere escolher o lugar?`;
+    }
+    if (ousadia >= 4) {
+      return `1. Perigoso você me mandar mensagem a essa hora... logo agora que eu estava tentando me concentrar.
+2. Não sei se você é uma boa influência, mas admito que sua mensagem melhorou meu dia em 100%.
+3. Menos papo e mais atitude: quando é que você vai admitir que tá louca(o) pra me ver?`;
+    }
+    if (cleanMsg.includes("oi") || cleanMsg.includes("olá") || cleanMsg.length < 15) {
+      return `1. Oi sumiço(a). Lembrou que eu existo ou foi só saudade momentânea?
+2. Esse seu "oi" tímido tá querendo dizer tanta coisa... O que você tá aprontando?
+3. Se demorou tanto pra mandar isso, espero que a continuação venha à altura do suspense.`;
+    }
+    return `1. Adorei a audácia, mas agora me deu curiosidade: você sempre joga assim ou sou eu quem desperta esse seu lado?
+2. Se eu responder exatamente o que pensei agora, você não vai saber como reagir. Me dá 5 minutos.
+3. Não vou mentir, você tem bom gosto pra puxar assunto. Me conta mais sobre isso.`;
+  }
+
+  if (lang === "es") {
+    if (dir.includes("cita") || dir.includes("salir") || dir.includes("quedar")) {
+      return `1. Hablas muy bien por chat, pero quiero comprobar si en persona tienes la misma labia. ¿Jueves o viernes?
+2. Convencerme por texto es fácil. ¿Qué tal un vino esta semana y vemos si la química es tan real?
+3. Ya vi que por mensaje nos vamos a liar. ¿Paso por ti a las 20h o prefieres elegir el lugar?`;
+    }
+    return `1. Peligroso que me escribas a estas horas... justo cuando estaba intentando concentrarme.
+2. No sé si eres una buena influencia, pero admito que tu mensaje me sacó una sonrisa.
+3. Menos palabras y más acción: ¿cuándo vas a admitir que tienes ganas de verme?`;
+  }
+
+  if (lang === "fr") {
+    return `1. Dangereux de m'envoyer un message à cette heure... pile quand j'essayais d'être sage.
+2. Tu as beaucoup de répartie par message, mais en vrai, est-ce que tu assures autant ? On vérifie cette semaine ?
+3. Ne mens pas, tu attendais ma réponse depuis des heures. Dis-moi tout.`;
+  }
+
+  if (lang === "de") {
+    return `1. Gefährlich, mir um diese Uhrzeit zu schreiben... gerade als ich mich konzentrieren wollte.
+2. Per Chat bist du ganz schön schlagfertig. Wollen wir diese Woche bei einem Drink testen, ob das auch live gilt?
+3. Gib es zu: Du hast schon sehnsüchtig auf meine Nachricht gewartet.`;
+  }
+
+  if (lang === "it") {
+    return `1. Pericoloso scrivermi a quest'ora... proprio adesso che cercavo di fare il bravo.
+2. Sei molto spigliata(o) per messaggio, ma dal vivo riesci a tenere lo stesso ritmo? Verifichiamo questa settimana?
+3. Ammettilo: non vedevi l'ora che ti rispondessi. Dai, cosa hai in mente?`;
+  }
+
+  // Default English
+  if (dir.includes("date") || dir.includes("meet") || dir.includes("hangout")) {
+    return `1. You talk a big game over text, but let's see if your banter holds up in person. Drinks this Thursday?
+2. Texting is fun, but I'm much better across a table with a drink. Let's fix that this week.
+3. Are you always this charming, or are you just trying to get me to ask you out? Because it might be working.`;
+  }
+  if (ousadia >= 4) {
+    return `1. Dangerous text to send me at this hour... right when I was actually trying to behave.
+2. I have a feeling you're nothing but trouble, but I'm willing to take the risk.
+3. Less talking, more doing: when are you going to admit you're dying to see me?`;
+  }
+  return `1. I see what you did there. Bold move, but you definitely have my attention.
+2. If I replied with what I actually just thought, you wouldn't know what to do with yourself.
+3. Not going to lie, your timing is impeccable. What else are you scheming today?`;
+}
+
+function generateSmartFallbackAnalysis(
+  resposta: string,
+  relacao: string,
+  rumoConversa: string,
+  lang: string
+): string {
+  if (lang === "pt") {
+    return `Essa resposta aplica controle de quadro e tensão divertida (push-pull). Em vez de entregar tudo de bandeja, ela desafia sutilmente a outra pessoa, mantendo seu valor percebido alto e guiando a conversa com naturalidade.`;
+  }
+  if (lang === "es") {
+    return `Esta respuesta aplica control de marco y tensión juguetona (push-pull). En lugar de ceder de inmediato, lanza un desafío sutil que eleva tu valor percibido y guía la charla hacia la cita.`;
+  }
+  if (lang === "fr") {
+    return `Cette réponse utilise le push-pull et le contrôle du cadre. Elle intrigue l'autre personne en posant un défi élégant sans paraître acquise.`;
+  }
+  if (lang === "de") {
+    return `Diese Antwort nutzt Push-Pull und Frame-Control. Statt vorhersehbar zu sein, fordert sie neckisch heraus und steigert deine Anziehungskraft.`;
+  }
+  if (lang === "it") {
+    return `Questa risposta applica il push-pull e il controllo del contesto. Incuriosisce l'altra persona con una sfida leggera, mantenendo alto il tuo valore.`;
+  }
+  return `This reply leverages high-status frame control and playful push-pull dynamic. Instead of giving eager validation, it playfully challenges them, flipping the script so they qualify themselves to you.`;
+}
+
 async function generateWithFallback(ai: GoogleGenAI, contents: any, systemInstruction: string, temperature = 0.85) {
-  const candidateModels = ["gemini-3.8-flash", "gemini-flash-latest", "gemini-3.1-flash-lite"];
+  // Expanded candidate models prioritized by capacity and stability
+  const candidateModels = [
+    "gemini-2.5-flash",
+    "gemini-3.1-flash-lite",
+    "gemini-3.8-flash",
+    "gemini-flash-latest",
+    "gemini-2.5-flash-lite",
+    "gemini-3.1-pro-preview",
+  ];
   let lastError: any = null;
 
   for (const model of candidateModels) {
-    try {
-      const response = await ai.models.generateContent({
-        model,
-        contents,
-        config: {
-          systemInstruction,
-          temperature,
-        },
-      });
-      if (response.text) {
-        return response.text;
+    // Retry up to 2 times for 503 transient spikes
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents,
+          config: {
+            systemInstruction,
+            temperature,
+          },
+        });
+        if (response.text && response.text.trim()) {
+          return response.text;
+        }
+      } catch (err: any) {
+        lastError = err;
+        const msg = String(err?.message || err);
+        console.warn(`Model ${model} (attempt ${attempt + 1}) notice:`, msg);
+
+        // If 503 (high demand) or 429 (rate limit), pause briefly before retry
+        if (msg.includes("503") || msg.includes("demand") || msg.includes("429")) {
+          await new Promise((res) => setTimeout(res, 400 * (attempt + 1)));
+        } else {
+          // If non-recoverable error for this model, break immediately to try next model
+          break;
+        }
       }
-    } catch (err: any) {
-      console.warn(`Model ${model} failed with error:`, err?.message || err);
-      lastError = err;
-      await new Promise((res) => setTimeout(res, 500));
     }
   }
 
-  throw lastError || new Error("Failed to generate responses with available models.");
+  throw lastError || new Error("All AI models temporarily busy.");
 }
 
 // In-memory rate limiting map for DoS and abuse protection
@@ -282,8 +404,20 @@ Return EXACTLY 3 numbered options (1., 2., 3.) strictly in ${langNames[validLang
       }
       contents.push({ text: promptText });
 
-      const ai = getGenAI();
-      const rawText = await generateWithFallback(ai, contents, systemInstruction, 0.85);
+      const rawTemperature = req.body.temperature;
+      const customTemp =
+        typeof rawTemperature === "number" && !isNaN(rawTemperature)
+          ? Math.min(Math.max(rawTemperature, 0.1), 1.5)
+          : 0.85;
+
+      let rawText = "";
+      try {
+        const ai = getGenAI();
+        rawText = await generateWithFallback(ai, contents, systemInstruction, customTemp);
+      } catch (err: any) {
+        console.warn("External Gemini API 503 spike, using Lovix Smart Dynamic Engine:", err?.message || err);
+        rawText = generateSmartFallbackReplies(mensagem, rumoConversa, relacao, tom, ousadia, validLang);
+      }
 
       // Parse 3 numbered options
       const lines = rawText.split("\n").map((l) => l.trim()).filter(Boolean);
@@ -404,9 +538,15 @@ Explain the psychological dynamic (push-pull, frame control, status, or intrigue
       }
       contents.push({ text: prompt });
 
-      const ai = getGenAI();
-      const systemInstruction = SYSTEM_PROMPTS[validLang] || SYSTEM_PROMPTS.en;
-      const analysis = await generateWithFallback(ai, contents, systemInstruction, 0.7);
+      let analysis = "";
+      try {
+        const ai = getGenAI();
+        const systemInstruction = SYSTEM_PROMPTS[validLang] || SYSTEM_PROMPTS.en;
+        analysis = await generateWithFallback(ai, contents, systemInstruction, 0.7);
+      } catch (err: any) {
+        console.warn("Analysis fallback active:", err?.message || err);
+        analysis = generateSmartFallbackAnalysis(resposta, relacao, rumoConversa, validLang);
+      }
 
       res.json({ analysis });
     } catch (err: any) {

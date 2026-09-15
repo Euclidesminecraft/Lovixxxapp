@@ -117,9 +117,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   if (image) {
     const sizeKb = Math.round(image.size / 1024);
     return (
-      <div className="p-3 rounded-xl bg-zinc-950/80 border border-rose-500/30 flex items-center justify-between gap-3 animate-in fade-in duration-150">
+      <div className="p-3 rounded-xl bg-zinc-950/80 border border-white/[0.08] flex items-center justify-between gap-3 animate-in fade-in duration-150">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 border border-zinc-700 bg-zinc-900 relative">
+          <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 border border-white/[0.1] bg-zinc-900 relative shadow-sm">
             <img
               src={image.data}
               alt="Print enviado"
@@ -127,11 +127,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             />
           </div>
           <div className="min-w-0">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-200 truncate">
+            <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-200 truncate">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               <span className="truncate">{image.name || "Print de conversa"}</span>
             </div>
-            <p className="text-[11px] text-zinc-400 flex items-center gap-1 mt-0.5">
+            <p className="text-[11px] text-zinc-400 flex items-center gap-1.5 mt-0.5 font-normal">
               <span>{sizeKb} KB</span>
               <span>•</span>
               <span className="text-rose-400 font-medium">Pronto para análise</span>
@@ -142,7 +142,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         <button
           type="button"
           onClick={() => onImageChange(null)}
-          className="p-2 rounded-lg text-zinc-400 hover:text-rose-400 hover:bg-zinc-900 transition-colors cursor-pointer shrink-0"
+          className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-400 hover:bg-zinc-900 border border-transparent hover:border-white/[0.06] transition-colors cursor-pointer shrink-0"
           title="Remover imagem"
         >
           <X className="w-4 h-4" />
@@ -158,10 +158,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       onDrop={handleDrop}
       onPaste={handlePaste}
       tabIndex={0}
-      className={`relative border-2 border-dashed rounded-xl p-4 sm:p-5 transition-all outline-none text-center cursor-pointer ${
+      className={`relative border border-dashed rounded-xl p-4 sm:p-5 transition-all outline-none text-center cursor-pointer ${
         isDragging
-          ? "border-rose-500 bg-rose-500/10 scale-[1.01]"
-          : "border-zinc-800 hover:border-zinc-700 bg-zinc-950/50 hover:bg-zinc-950/80"
+          ? "border-rose-500 bg-rose-500/[0.06]"
+          : "border-white/[0.1] hover:border-white/[0.2] bg-zinc-950/40 hover:bg-zinc-950/70"
       }`}
       onClick={() => fileInputRef.current?.click()}
     >
@@ -174,26 +174,26 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       />
 
       <div className="flex flex-col items-center justify-center gap-2">
-        <div className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-700/80 flex items-center justify-center text-rose-400 shadow-sm">
+        <div className="w-9 h-9 rounded-xl bg-zinc-900 border border-white/[0.08] flex items-center justify-center text-zinc-300 shadow-sm">
           {isProcessing ? (
             <div className="w-4 h-4 border-2 border-rose-500 border-t-transparent rounded-full animate-spin" />
           ) : (
-            <Upload className="w-5 h-5" />
+            <Upload className="w-4 h-4 text-zinc-400" />
           )}
         </div>
 
         <div>
-          <div className="text-xs font-semibold text-zinc-200 flex items-center justify-center gap-1.5">
+          <div className="text-xs font-medium text-zinc-200 flex items-center justify-center gap-1.5">
             <span>Clique para enviar print de conversa ou foto</span>
           </div>
-          <p className="text-[11px] text-zinc-400 mt-1 max-w-sm">
-            Arraste, selecione do celular/PC ou dê <kbd className="px-1 py-0.2 rounded bg-zinc-800 text-zinc-300 font-mono text-[10px]">Ctrl+V</kbd>
+          <p className="text-[11px] text-zinc-400 mt-1 max-w-sm font-normal">
+            Arraste, selecione do celular/PC ou dê <kbd className="px-1.5 py-0.5 rounded bg-zinc-900 border border-white/[0.08] text-zinc-300 font-mono text-[10px]">Ctrl+V</kbd>
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-[10px] text-zinc-500 mt-1">
-          <span className="flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-amber-400" /> WhatsApp, Direct, Tinder, Bumble
+        <div className="flex items-center gap-2 text-[10px] text-zinc-500 mt-0.5">
+          <span className="flex items-center gap-1 font-medium">
+            <Sparkles className="w-3 h-3 text-rose-500" /> WhatsApp, Instagram Direct, Tinder, Bumble
           </span>
         </div>
       </div>

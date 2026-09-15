@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGradMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141419" />
+      <stop offset="100%" stop-color="#09090b" />
+    </linearGradient>
+    <linearGradient id="flameGradMask" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e11d48" />
+      <stop offset="50%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#fb7185" />
+    </linearGradient>
+    <linearGradient id="innerGradMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#f43f5e" />
+    </linearGradient>
+  </defs>
+
+  <!-- Full bleed background for Android masking -->
+  <rect width="512" height="512" fill="url(#bgGradMask)" />
+
+  <!-- Inner safe-zone scaled content (0.75 scale centered) -->
+  <g transform="translate(64, 64) scale(0.75)">
+    <!-- Main Outer Flame -->
+    <path d="M256 100 C280 170 360 215 360 295 C360 360 312 402 256 402 C200 402 152 360 152 295 C152 225 220 175 238 128 C244 114 252 104 256 100 Z" 
+          fill="url(#flameGradMask)" />
+
+    <!-- Stylized Heart Negative / Inner flame cutout -->
+    <path d="M256 360 C256 360 200 315 200 268 C200 242 220 224 242 224 C250 224 254 228 256 232 C258 228 262 224 270 224 C292 224 312 242 312 268 C312 315 256 360 256 360 Z" 
+          fill="url(#innerGradMask)" />
+
+    <!-- Core Sparkle -->
+    <polygon points="256,245 260,265 280,269 260,273 256,293 252,273 232,269 252,265" fill="#ffffff" opacity="0.95" />
+    
+    <!-- Wingman Star Accent -->
+    <polygon points="340,140 344,152 356,156 344,160 340,172 336,160 324,156 336,152" fill="#fbbf24" />
+  </g>
+</svg>
